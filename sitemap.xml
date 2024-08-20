@@ -2,6 +2,60 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://example.com/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E5%8D%95%E6%9C%BA%E7%BC%96%E6%8E%92/</loc>
+    
+    <lastmod>2024-08-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E9%83%A8%E7%BD%B2%E5%BA%94%E7%94%A8/</loc>
+    
+    <lastmod>2024-08-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA/</loc>
+    
+    <lastmod>2024-08-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E7%BD%91%E7%BB%9C%E5%AD%98%E5%82%A8/</loc>
+    
+    <lastmod>2024-08-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/</loc>
+    
+    <lastmod>2024-08-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E5%8E%9F%E7%90%86%E6%A6%82%E8%BF%B0/</loc>
+    
+    <lastmod>2024-08-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://example.com/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93MYSQL-%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/</loc>
     
     <lastmod>2024-08-20</lastmod>
