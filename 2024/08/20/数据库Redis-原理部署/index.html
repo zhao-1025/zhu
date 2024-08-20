@@ -1,0 +1,491 @@
+<!DOCTYPE html><html lang="zh" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>数据库Redis-原理部署 | 一往无前虎山行,拨开云雾见光明</title><meta name="author" content="赵东兴"><meta name="copyright" content="赵东兴"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="redis概述阿里云redis文档https:&#x2F;&#x2F;help.aliyun.com&#x2F;product&#x2F;26340.html 1.为什么使用redis 快速的读写速度：Redis是一个基于内存的数据存储系统，因此具有非常快速的读写速度。这使得它非常适合用作缓存系统，可以大大提高应用程序的性能和响应速度。 支持丰富的数据结构：Redis支持多种数据结构，如字符串、哈希、列表、集合、有序集合等，这使得它可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库Redis-原理部署">
+<meta property="og:url" content="http://example.com/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%8E%9F%E7%90%86%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="一往无前虎山行,拨开云雾见光明">
+<meta property="og:description" content="redis概述阿里云redis文档https:&#x2F;&#x2F;help.aliyun.com&#x2F;product&#x2F;26340.html 1.为什么使用redis 快速的读写速度：Redis是一个基于内存的数据存储系统，因此具有非常快速的读写速度。这使得它非常适合用作缓存系统，可以大大提高应用程序的性能和响应速度。 支持丰富的数据结构：Redis支持多种数据结构，如字符串、哈希、列表、集合、有序集合等，这使得它可以">
+<meta property="og:locale">
+<meta property="og:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png">
+<meta property="article:published_time" content="2024-08-20T03:42:48.000Z">
+<meta property="article:modified_time" content="2024-08-20T03:47:06.198Z">
+<meta property="article:author" content="赵东兴">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%8E%9F%E7%90%86%E9%83%A8%E7%BD%B2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Error',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '数据库Redis-原理部署',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-08-20 11:47:06'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="一往无前虎山行,拨开云雾见光明" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="一往无前虎山行,拨开云雾见光明"><span class="site-name">一往无前虎山行,拨开云雾见光明</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">数据库Redis-原理部署</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2024-08-20T03:42:48.000Z" title="Created 2024-08-20 11:42:48">2024-08-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-08-20T03:47:06.198Z" title="Updated 2024-08-20 11:47:06">2024-08-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="数据库Redis-原理部署"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="redis概述"><a href="#redis概述" class="headerlink" title="redis概述"></a>redis概述</h1><p>阿里云redis文档<br><a target="_blank" rel="noopener" href="https://help.aliyun.com/product/26340.html">https://help.aliyun.com/product/26340.html</a></p>
+<h2 id="1-为什么使用redis"><a href="#1-为什么使用redis" class="headerlink" title="1.为什么使用redis"></a>1.为什么使用redis</h2><ol>
+<li>快速的读写速度：Redis是一个基于内存的数据存储系统，因此具有非常快速的读写速度。这使得它非常适合用作缓存系统，可以大大提高应用程序的性能和响应速度。</li>
+<li>支持丰富的数据结构：Redis支持多种数据结构，如字符串、哈希、列表、集合、有序集合等，这使得它可以灵活地处理各种类型的数据，并且支持丰富的操作。这使得Redis不仅仅可以用作缓存，还可以用于实时统计、计数、排行榜等功能。</li>
+<li>高可用性和可扩展性：Redis支持主从复制和集群模式，可以提供高可用性和横向扩展能力。这使得Redis可以应对大规模的数据存储和高并发访问。</li>
+<li>持久化和数据备份：Redis支持将数据持久化到磁盘，这意味着即使发生服务器重启，数据也不会丢失。同时，Redis还支持数据的定期备份和恢复，能够有效地保障数据的安全性和可靠性。</li>
+<li>支持丰富的应用场景：除了作为缓存系统外，Redis还可以用于会话存储、消息队列、实时分析、地理位置查询等多种应用场景。它的灵活性和高性能使得它在各种领域都有广泛的应用。</li>
+</ol>
+<p>总之，使用Redis可以提供给用户更好的体验，帮助开发者更好地应对大规模数据和高并发访问的挑战。</p>
+<p><strong>无redis场景</strong></p>
+<p>对于Web来说，用户量和访问量增一定程度上推动项目技术和架构的更迭和进步。</p>
+<p>可能会有以下的一些状况：</p>
+<p>页面并发量和访问量并不多，MySQL足以支撑自己逻辑业务的发展。<br>那么其实可以不加缓存。最多对静态页面进行缓存即可。</p>
+<p>页面的并发量显著增多，数据库有些压力，并且有些数据更新频率较低反复被查询或者查询速度较慢。<br>那么就可以考虑使用缓存技术优化。</p>
+<p>对高命中的对象存到key-value形式的Redis中，那么如果数据被命中，那么可以不经过效率很低的db。<br>从高效的redis中查找到数据。</p>
+<p>当然，可能还会遇到其他问题，你还通过静态页面缓存页面、cdn加速、甚至负载均衡这些方法提高系统并发量。</p>
+<p><img src="/image-20240624182858085.png" alt="image-20240624182858085"></p>
+<p><strong>有redis场景</strong></p>
+<p>缓存适用于高并发的场景，提升服务容量。</p>
+<p>主要是将从经常被访问的数据或者查询成本较高从慢的介质中存到比较快的介质中，比如从硬盘—&gt;内存。</p>
+<p>我们知道大多数关系数据库是基于硬盘读写的，其效率和资源有限，而redis是基于内存的，其读写速度差别差别很大。</p>
+<p>当并发过高关系数据库性能达到瓶颈时候，就可以策略性将常访问数据放到Redis提高系统吞吐和并发量。</p>
+<p>对于常用网站和场景，关系数据库主要可能慢在两个地方：</p>
+<p>1.读写IO性能较差<br>2.一个数据可能通过较大量计算得到</p>
+<p>所以使用缓存能够减少磁盘IO次数和关系数据库的计算次数。</p>
+<p>读取上速度快也从两个方面体现：</p>
+<p>1.基于内存，读写较快<br>2.使用哈希算法直接定位结果不需要计算，直接key-value获取结果</p>
+<p>所以对于像样的，有点规模的网站，缓存是很必要的，而Redis无疑是最好的选择之一。</p>
+<blockquote>
+<p>但是使用缓存，也要注意诸多问题，多引入了一个环节，必然会引发更多问题</p>
+<ol>
+<li>缓存不适用于，数据一致性特别高场景</li>
+<li>缓存也不适用于并发量并不多的，加入缓存，不但架构更难维护，浪费资源，且让项目更臃肿，可能redis也会出问题</li>
+<li>引入缓存，就要考虑对k-v的数据如何设计</li>
+</ol>
+</blockquote>
+<p><strong>数据一致性特别高的为什么不建议redis存储</strong></p>
+<ol>
+<li>数据持久性：尽管Redis提供了持久化功能，但是由于其主要是基于内存的数据库，数据持久化的机制相对于传统的磁盘存储数据库来说可能更容易丧失数据一致性。即使开启了持久化功能，也难以保证和传统数据库一样的数据持久性和稳定性。</li>
+<li>内存限制：Redis的数据存储是基于内存的，因此受到内存容量的限制，如果数据量很大，可能会导致内存不足的问题。而且，将大量数据存储在内存中也会增加成本和复杂性，不利于系统的扩展和维护。</li>
+<li>操作复杂性：在保持数据一致性的情况下，需要进行严格的并发控制和事务管理。虽然Redis提供了一些原子操作和事务支持，但在处理复杂的数据一致性问题时会相对复杂，需要开发人员额外处理和管理。</li>
+<li>数据库更适合的场景：对于数据一致性要求特别高的场景，传统的关系型数据库或者其他分布式数据库可能更适合，这些数据库通常具有更严格的事务支持和数据一致性保证。</li>
+</ol>
+<p><img src="/image-20240624183700245.png" alt="image-20240624183700245"></p>
+<h2 id="2-关系型与非关系型数据库"><a href="#2-关系型与非关系型数据库" class="headerlink" title="2.关系型与非关系型数据库"></a>2.关系型与非关系型数据库</h2><p>关系型数据库：mysql、oracle、postgreSQL</p>
+<p>非关系：redis mongoDB  ES</p>
+<p><strong>非关系型数据库:</strong></p>
+<p>nosql(not only sql)不仅仅是sql，是不同于传统关系型数据库的统称。</p>
+<p>特点是 key-value 这种键值对存储数据的形式，而不是<em>Mysql</em>这样库、表结构存储形式。</p>
+<p><strong>noSQL用于处理高速读写的数据存储场景</strong></p>
+<p>如用户访问行为，用户地理定位数据、电商秒杀类的订单数据超高的 <code>瞬时并发请求</code></p>
+<p>视频网的弹幕信息、直播间的刷礼物、点赞等功能</p>
+<p>联盟、王者的玩家巅峰排行榜的数据</p>
+<p>微博的最新评论、最新点赞</p>
+<p>这类要求高并发，高读写的业务场景，数据都是存储在redis里，提高APP响应速度，让用户更好的体验</p>
+<h2 id="3-redis特点"><a href="#3-redis特点" class="headerlink" title="3.redis特点"></a>3.redis特点</h2><p>Redis是一种支持key-value等多种数据结构的存储数据库系统</p>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.软件源码高质量，运行速度快，C语言开发，单线程架构</td>
+<td>质量高：软件源码经过测试与审计才上线<br />运行速度快：C编译性语言开发的，编译后生成机器码运行，速度快<br />单线程架构：处理数据更简单，一个个数据处理速度更快<br /><code>总之就是redis这个应用程序处理起来数据很快</code></td>
+</tr>
+<tr>
+<td>2.支持丰富数据类型，面对各种业务场景</td>
+<td>字符串、哈希、列表、集合、有序集合</td>
+</tr>
+<tr>
+<td>3.功能丰富，可以实现如</td>
+<td>计数器（点赞评论数）、过期功能（购物车订单）、 消息队列、发布订阅</td>
+</tr>
+<tr>
+<td>4.支持多种语言客户端连接</td>
+<td>php，java，golang，python</td>
+</tr>
+<tr>
+<td>5.支持数据持久化</td>
+<td>运行时的数据都在内存，可以基于RDB，AOF持久化到磁盘里，或混合持久化</td>
+</tr>
+<tr>
+<td>6.内置高可用架构</td>
+<td>主从复制，哨兵，集群</td>
+</tr>
+</tbody></table>
+<ol>
+<li><strong>内存数据结构存储</strong>:<ul>
+<li>Redis将数据完全存储在内存中,提供了丰富的数据结构,如字符串、哈希、列表、集合、有序集合等。</li>
+<li>这使得Redis能够提供非常高的读写性能。</li>
+</ul>
+</li>
+<li><strong>持久化</strong>:<ul>
+<li>Redis支持将内存中的数据异步或同步地保存到磁盘上,以实现数据的持久化。</li>
+<li>主要持久化方式包括RDB(Redis数据库备份)和AOF(附录文件)。</li>
+</ul>
+</li>
+<li><strong>复制(主从复制)</strong>:<ul>
+<li>Redis支持主从复制,可以实现一个主Redis服务器向多个从Redis服务器同步数据。</li>
+<li>这提高了读取性能,并增加了数据的可用性和容错性。</li>
+</ul>
+</li>
+<li><strong>事务</strong>:<ul>
+<li>Redis支持将一组命令作为一个原子性的事务执行。</li>
+<li>事务中的所有命令要么全部执行,要么全部不执行。</li>
+</ul>
+</li>
+<li><strong>发布&#x2F;订阅模式</strong>:<ul>
+<li>Redis提供了发布&#x2F;订阅的消息模式,支持订阅者订阅感兴趣的频道,并接收发布者发布的消息。</li>
+</ul>
+</li>
+<li><strong>Keys过期机制</strong>:<ul>
+<li>Redis支持为键设置过期时间,到期后自动删除。</li>
+<li>这对于缓存应用很有用。</li>
+</ul>
+</li>
+<li><strong>高可用和分布式</strong>:<ul>
+<li>Redis支持主从复制和哨兵模式,提供了一定程度的高可用性。</li>
+<li>并且通过Redis集群,可以实现水平扩展和分布式存储。</li>
+</ul>
+</li>
+</ol>
+<p>总之,Redis凭借其高性能、丰富的数据结构、持久化和复制机制,广泛应用于缓存、消息队列、排行榜等场景。它是一个非常灵活和强大的NoSQL数据库。</p>
+<blockquote>
+<p>redis特点通俗理解</p>
+</blockquote>
+<ol>
+<li><strong>多种数据结构</strong>:<ul>
+<li>就像仓库里有不同的箱子，Redis有各种“箱子”来存放不同类型的数据，比如可以放文本、数字列表、集合等。</li>
+</ul>
+</li>
+<li><strong>超快速度</strong>:<ul>
+<li>Redis就像一个超级快的快递员，可以迅速地存取和检索信息，几乎瞬间就能完成任务。</li>
+</ul>
+</li>
+<li><strong>数据自动保存</strong>:<ul>
+<li>就像你把重要的笔记拍照保存，Redis也会在不小心丢失信息时帮你备份，保证数据的安全。</li>
+</ul>
+</li>
+<li><strong>复制数据</strong>:<ul>
+<li>就像给重要的文件做副本以防丢失，Redis可以创建数据的副本，这样即使一个服务器出问题，数据也不会丢失。</li>
+</ul>
+</li>
+<li><strong>事务操作</strong>:<ul>
+<li>在Redis里执行一系列操作就像订一张票，要么所有步骤都完成，要么都不完成，确保不会出现半途而废的情况。</li>
+</ul>
+</li>
+<li><strong>发布订阅</strong>:<ul>
+<li>类似于订阅杂志，你可以在Redis上订阅特定的“频道”，一旦有消息发布到这个频道，你就能立即知道。</li>
+</ul>
+</li>
+<li><strong>自动清理过期数据</strong>:<ul>
+<li>就像超市里的过期食品会自动下架，Redis中的数据如果超过了设定的“保质期”就会自动被清理。</li>
+</ul>
+</li>
+<li><strong>高可用性和分布式存储</strong>:<ul>
+<li>这就像是备份你的文件到云端，确保即使家里的电脑坏了，你的文件也能在其他地方安全访问。Redis可以通过多个服务器来确保数据的可用性和扩展性。</li>
+</ul>
+</li>
+</ol>
+<h2 id="4-redis应用场景-核心"><a href="#4-redis应用场景-核心" class="headerlink" title="4.redis应用场景-核心"></a>4.redis应用场景-核心</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>缓存</span><br><span class="line">key过期特性</span><br><span class="line"><span class="operator">-</span> 用户登录网站的session信息写入redis、过期后自动删除</span><br><span class="line"><span class="operator">-</span> 商城的优惠券过期</span><br><span class="line"><span class="operator">-</span> 短信验证码的过期</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>排行榜</span><br><span class="line">数据类型的列表、有序集合</span><br><span class="line"><span class="operator">-</span> 抖音点赞点击量</span><br><span class="line"><span class="operator">-</span> 直播间打赏老板排行榜</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>计数器</span><br><span class="line"><span class="operator">-</span> 博客阅读量</span><br><span class="line"><span class="operator">-</span> 视频播放次数</span><br><span class="line"><span class="operator">-</span> 在线观看人数</span><br><span class="line"><span class="operator">-</span> 评论最新数量</span><br><span class="line"><span class="operator">-</span> 点赞、点踩</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span> 社交网络</span><br><span class="line">redis的集合数据类型</span><br><span class="line"><span class="operator">-</span> 粉丝</span><br><span class="line"><span class="operator">-</span> 共同好友 <span class="operator">/</span> 可能认识的人</span><br><span class="line"><span class="operator">-</span> 兴趣爱好 <span class="operator">/</span> 同兴趣的人</span><br><span class="line"><span class="operator">-</span> 用户注册、账号是否已存在</span><br><span class="line"></span><br><span class="line"><span class="number">5.</span>消息队列</span><br><span class="line">redis的列表类型</span><br><span class="line"><span class="operator">-</span> ELK日志的缓存</span><br><span class="line"><span class="operator">-</span> 聊天记录</span><br><span class="line"></span><br><span class="line"><span class="number">6.</span> 发布订阅</span><br><span class="line"><span class="operator">-</span> 粉丝关注通知</span><br><span class="line"><span class="operator">-</span> 粉丝群消息发布</span><br></pre></td></tr></table></figure>
+
+<p>Redis作为一种高性能的内存数据结构存储系统，应用场景非常广泛。以下是一些常见的使用Redis的场景：</p>
+<ol>
+<li><strong>高速缓存</strong>:<ul>
+<li>使用Redis作为数据库或应用服务器的缓存层，可以快速检索数据，减少数据库访问压力，提高应用响应速度。</li>
+</ul>
+</li>
+<li><strong>会话管理</strong>:<ul>
+<li>存储用户的登录状态和会话信息，例如用户的登录时间、权限信息等。</li>
+</ul>
+</li>
+<li><strong>排行榜&#x2F;计数器</strong>:<ul>
+<li>实现实时排行榜功能，比如游戏评分、新闻热度等，也可以用于计数器，如统计网站访问量。</li>
+</ul>
+</li>
+<li><strong>消息队列</strong>:<ul>
+<li>作为消息中间件，用于处理高并发的消息传递，实现应用程序之间的解耦合。</li>
+</ul>
+</li>
+<li><strong>社交网络</strong>:<ul>
+<li>用于存储用户关系（如好友列表）、用户偏好设置、内容推荐等。</li>
+</ul>
+</li>
+<li><strong>地理信息空间</strong>:<ul>
+<li>存储地理位置数据，进行地理查询和空间分析。</li>
+</ul>
+</li>
+<li><strong>图像&#x2F;视频处理</strong>:<ul>
+<li>缓存图片和视频内容，减少对原始存储系统的访问。</li>
+</ul>
+</li>
+<li><strong>电子商务</strong>:<ul>
+<li>缓存商品信息、用户购物车、订单状态等，提高网站性能。</li>
+</ul>
+</li>
+<li><strong>游戏开发</strong>:<ul>
+<li>用于存储游戏状态、玩家数据、排行榜等。</li>
+</ul>
+</li>
+<li><strong>实时分析</strong>:<ul>
+<li>对实时数据进行分析和处理，如股票交易数据、日志分析等。</li>
+</ul>
+</li>
+<li><strong>分布式系统</strong>:<ul>
+<li>用于分布式锁、分布式计数器等分布式系统的组件。</li>
+</ul>
+</li>
+<li><strong>物联网 (IoT)</strong>:<ul>
+<li>用于快速处理来自物联网设备的实时数据。</li>
+</ul>
+</li>
+</ol>
+<p>Redis的这些应用场景得益于其高性能、易用性和丰富的数据结构支持，使其成为现代软件架构中不可或缺的一部分</p>
+<blockquote>
+<p>通俗理解一些应用场景</p>
+</blockquote>
+<ol>
+<li><strong>高速缓存</strong>：<ul>
+<li>想象你经常去一个很大的书店，每次找书都要翻很久。你聪明地决定把常读的书放在家里的书架上。Redis就像你家的书架，你经常访问的网页内容或数据都存放在这里，下次访问时就不用再到书店（数据库）去找了，直接在家（Redis）就能快速拿到，节省了很多时间。</li>
+</ul>
+</li>
+<li><strong>会话管理</strong>：<ul>
+<li>上了网就像进了商场，每次想要买的东西和购物篮都需要记录。Redis就像商场里的一个小本本，记着你进了哪些店，买了什么，下次再来时，可以直接从本子上找到，不用再到处找服务员问。</li>
+</ul>
+</li>
+<li><strong>排行榜&#x2F;计数器</strong>：<ul>
+<li>想象你参加了一个比赛，想知道自己在所有参赛者中的排名。Redis在这里就像的成绩公布板，每次有人参赛，板子上的数据就会更新，你的排名一目了然。</li>
+</ul>
+</li>
+<li><strong>消息队列</strong>：<ul>
+<li>就像你在餐厅里用点餐夹子把你的订单夹在队伍里，Redis帮你管理好这个订单队列。无论有多少人同时点餐，你的订单都能按顺序得到处理。</li>
+</ul>
+</li>
+<li><strong>社交网络</strong>：<ul>
+<li>在社交网络里，你想知道谁关注了你，或者你关注了谁。Redis就像一个快速查找表，帮你快速找到所有关注的人和被关注的人。</li>
+</ul>
+</li>
+<li><strong>地理信息空间</strong>：<ul>
+<li>想要找附近的餐厅或者加油站，你可以使用Redis来存储地图上的各种地点，快速告诉你附近有什么。</li>
+</ul>
+</li>
+<li><strong>图像&#x2F;视频处理</strong>：<ul>
+<li>在网上看视频或者图片，这些内容都很大，加载起来很慢。Redis就像一个快递员，把常用的图片和视频提前送到你的电脑上，让你能快速打开。</li>
+</ul>
+</li>
+<li><strong>电子商务</strong>：<ul>
+<li>在网上购物，你想看看别人买了什么，或者想要的东西库存还有多少。Redis帮你快速查到这些信息，让你购物体验更好。</li>
+</ul>
+</li>
+<li><strong>游戏开发</strong>：<ul>
+<li>玩游戏时，你的分数、道具和角色状态都需要实时保存。Redis就像一个快速存取的小盒子，帮你保存这些信息。</li>
+</ul>
+</li>
+<li><strong>实时分析</strong>：<ul>
+<li>想知道现在有多少人在看一场直播，或者有多少人打开了你的网站。Redis就像一个快速计算器，帮你实时统计这些数据。</li>
+</ul>
+</li>
+</ol>
+<p>这些场景展示了Redis如何通过其快速的数据存储和检索能力，在各个行业中提升效率和提高用户体验。</p>
+<h1 id="redis5-0安装部署"><a href="#redis5-0安装部署" class="headerlink" title="redis5.0安装部署"></a>redis5.0安装部署</h1><p><strong>官网</strong></p>
+<p><a target="_blank" rel="noopener" href="https://redis.io/">https://redis.io/</a></p>
+<p><strong>官网源码包下载地址</strong></p>
+<p><a target="_blank" rel="noopener" href="http://download.redis.io/releases/">http://download.redis.io/releases/</a></p>
+<h2 id="1-版本选择"><a href="#1-版本选择" class="headerlink" title="1.版本选择"></a>1.版本选择</h2><blockquote>
+<p>2.x系列 太老了无任用</p>
+<p>3.x系列 还有很多公司用，开始支持redis-cluster</p>
+<p>4.x系列 混合持久化玩法</p>
+<p>5.x系列 快手等互联网公司更新到这了，中小用公司使用，下方使用5.x版本</p>
+<p>6.x系列 最新版，用的还很少</p>
+</blockquote>
+<h2 id="2-安装部署"><a href="#2-安装部署" class="headerlink" title="2.安装部署"></a>2.安装部署</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>创建各数据存放目录</span><br><span class="line">#redis配置日志进程pid存放目录</span><br><span class="line">[root<span class="variable">@db</span><span class="number">-51</span> <span class="operator">~</span>]#mkdir <span class="operator">-</span>p <span class="operator">/</span>app<span class="operator">/</span>redis<span class="operator">/</span>redis_6379<span class="operator">/</span>&#123;conf,logs,pid&#125;</span><br><span class="line">#redis持久化数据存放目录</span><br><span class="line">[root<span class="variable">@db</span><span class="number">-51</span> <span class="operator">~</span>]#mkdir <span class="operator">-</span>p <span class="operator">/</span>app<span class="operator">/</span>redis<span class="operator">/</span>redis_6379<span class="operator">/</span>data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>下载redis5版本源码压缩包</span><br><span class="line">cd <span class="operator">/</span>opt;mkdir source</span><br><span class="line">cd <span class="operator">/</span>opt<span class="operator">/</span>source;wget http:<span class="operator">/</span><span class="operator">/</span>download.redis.io<span class="operator">/</span>releases<span class="operator">/</span>redis<span class="number">-5.0</span><span class="number">.7</span>.tar.gz</span><br><span class="line">cd <span class="operator">/</span>opt<span class="operator">/</span>source;tar <span class="operator">-</span>xf  redis<span class="number">-5.0</span><span class="number">.7</span>.tar.gz</span><br><span class="line">rm <span class="operator">-</span>f redis<span class="number">-5.0</span><span class="number">.7</span>.tar.gz </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>编译安装redis</span><br><span class="line">#安装gcc编译器与make构建工具</span><br><span class="line">yum install gcc make <span class="operator">-</span>y</span><br><span class="line">#进入源码目录编译且将编译好的软件安装到指定路径s</span><br><span class="line">make MALLOC<span class="operator">=</span>libc <span class="operator">&amp;&amp;</span> make install</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>生产环境下可进行编译测试</span><br><span class="line">yum install tcl tcl<span class="operator">-</span>devel <span class="operator">-</span>y</span><br><span class="line">make test</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">5.</span>查看安装后生成的二进制管理命令</span><br><span class="line">[root<span class="variable">@db</span><span class="number">-51</span> <span class="operator">~</span>]#ll <span class="operator">/</span>usr<span class="operator">/</span><span class="keyword">local</span><span class="operator">/</span>bin<span class="operator">/</span></span><br><span class="line">total <span class="number">13024</span></span><br><span class="line"><span class="operator">-</span>rwxr<span class="operator">-</span>xr<span class="operator">-</span>x. <span class="number">1</span> root root  <span class="number">353784</span> Jun <span class="number">24</span> <span class="number">16</span>:<span class="number">52</span> redis<span class="operator">-</span>benchmark  #性能检测</span><br><span class="line"><span class="operator">-</span>rwxr<span class="operator">-</span>xr<span class="operator">-</span>x. <span class="number">1</span> root root <span class="number">4058352</span> Jun <span class="number">24</span> <span class="number">16</span>:<span class="number">52</span> redis<span class="operator">-</span><span class="keyword">check</span><span class="operator">-</span>aof  #检查修复持久化方式aof文件数据</span><br><span class="line"><span class="operator">-</span>rwxr<span class="operator">-</span>xr<span class="operator">-</span>x. <span class="number">1</span> root root <span class="number">4058352</span> Jun <span class="number">24</span> <span class="number">16</span>:<span class="number">52</span> redis<span class="operator">-</span><span class="keyword">check</span><span class="operator">-</span>rdb  #检查修复持久化方式rdb文件数据</span><br><span class="line"><span class="operator">-</span>rwxr<span class="operator">-</span>xr<span class="operator">-</span>x. <span class="number">1</span> root root  <span class="number">799288</span> Jun <span class="number">24</span> <span class="number">16</span>:<span class="number">52</span> redis<span class="operator">-</span>cli        #clinet登录命令</span><br><span class="line">lrwxrwxrwx. <span class="number">1</span> root root      <span class="number">12</span> Jun <span class="number">24</span> <span class="number">16</span>:<span class="number">52</span> redis<span class="operator">-</span>sentinel <span class="operator">-</span><span class="operator">&gt;</span> redis<span class="operator">-</span>server</span><br><span class="line"><span class="operator">-</span>rwxr<span class="operator">-</span>xr<span class="operator">-</span>x. <span class="number">1</span> root root <span class="number">4058352</span> Jun <span class="number">24</span> <span class="number">16</span>:<span class="number">52</span> redis<span class="operator">-</span>server     #主从哨兵与服务端启动命令</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>知识点补充：</p>
+</blockquote>
+<p><strong>MALLOC&#x3D;libc参数说明：</strong></p>
+<p><code>MALLOC=libc</code>的作用是告诉编译器在编译软件时使用 libc 提供的内存分配函数来管理内存，而不是系统默认的内存分配函数。这可以影响软件的性能和可移植性，有时候可以在特定环境下提供更好的性能或确保代码在不同系统上的可移植性。</p>
+<p><strong>tcl与tcl-devel说明：</strong></p>
+<p>tcl和tcl-devel是与 Tcl（Tool Command Language）编程语言相关的软件包。它们的作用如下：</p>
+<ol>
+<li><code>tcl</code>：这是 Tcl 编程语言的运行时库，它包含了执行 Tcl 脚本所需的运行时环境。使用 <code>tcl</code> 包，可以在系统上运行 Tcl 脚本和程序。</li>
+<li><code>tcl-devel</code>：这是 Tcl 编程语言的开发包，包含了用于开发 Tcl 程序的头文件和静态库文件，以及其他开发所需的工具和文档。使用 tcl-devel包，可以在系统上开发和编译使用 Tcl 的程序。</li>
+</ol>
+<p>总而言之，tcl 和 tcl-devel提供了运行时环境和开发工具，让用户能够在系统上运行和开发使用 Tcl 编程语言的程序。</p>
+<p><strong>redis管理命令说明：</strong></p>
+<p><code>redis-benchmark</code> 是Redis自带的基准测试工具，用于测试Redis服务器的性能。它可以模拟多个并发客户端对 Redis 服务器进行读写操作，以评估服务器的性能。通过执行 <code>redis-benchmark</code> 命令，可以测试 Redis 服务器在当前环境下的读取和写入性能，并获得各种指标数据，如每秒操作数量、平均响应时间等，以便进行性能分析和优化。</p>
+<p><code>redis-check-aof</code> 是 Redis 提供的用于检查和修复 AOF（Append-Only File）文件的工具。AOF 是 Redis 使用的一种持久化方式，它记录了所有写命令，以便在服务器重启时重新执行这些命令来还原数据。<code>redis-check-aof</code> 工具可以用于检查 AOF 文件的完整性，查找可能出现的错误，并尝试修复这些错误。这有助于确保 AOF 文件的可靠性和一致性，从而保护数据不受损坏。</p>
+<p><code>redis-check-rdb</code> 是 Redis 提供的用于检查和修复 RDB（Redis DataBase）文件的工具。RDB 文件是 Redis 使用的另一种持久化方式，它是一个二进制文件，用于将 Redis 数据集保存到磁盘上。<code>redis-check-rdb</code> 工具可以用于检查 RDB 文件的完整性，查找可能出现的错误，并尝试修复这些错误。这有助于确保 RDB 文件的可靠性和一致性，从而保护数据不受损坏。</p>
+<h2 id="3-配置文件"><a href="#3-配置文件" class="headerlink" title="3.配置文件"></a>3.配置文件</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#相关数据存放目录</span><br><span class="line">mkdir <span class="operator">-</span>p <span class="operator">/</span>app<span class="operator">/</span>redis<span class="operator">/</span>redis_6379<span class="operator">/</span>&#123;conf,logs,pid&#125;</span><br><span class="line">mkdir <span class="operator">-</span>p <span class="operator">/</span>app<span class="operator">/</span>redis<span class="operator">/</span>redis_6379<span class="operator">/</span>data</span><br><span class="line"></span><br><span class="line">#配置文件如下</span><br><span class="line">cat <span class="operator">&gt;</span><span class="operator">/</span>app<span class="operator">/</span>redis<span class="operator">/</span>redis_6379<span class="operator">/</span>conf<span class="operator">/</span>redis_6379.conf<span class="operator">&lt;&lt;</span>&quot;EOF&quot;</span><br><span class="line">daemonize yes</span><br><span class="line">bind      <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="number">172.16</span><span class="number">.1</span><span class="number">.51</span></span><br><span class="line">port      <span class="number">6379</span></span><br><span class="line">pidfile   <span class="operator">/</span>app<span class="operator">/</span>tools<span class="operator">/</span>redis_6379<span class="operator">/</span>pid<span class="operator">/</span>redis_6379.pid</span><br><span class="line">logfile   <span class="operator">/</span>app<span class="operator">/</span>tools<span class="operator">/</span>redis_6379<span class="operator">/</span>logs<span class="operator">/</span>redis_6379.log</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置参数解释：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">daemonize yes                            #开启守护进程后台运行不占用终端会话</span><br><span class="line">bind      <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="number">172.16</span><span class="number">.1</span><span class="number">.51</span>          #服务运行网卡地址，若是开放公网<span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>即可</span><br><span class="line">port      <span class="number">6379</span>                           #服务运行端口</span><br><span class="line">pidfile   <span class="operator">/</span>app<span class="operator">/</span>tools<span class="operator">/</span>redis_6379<span class="operator">/</span>pid<span class="operator">/</span>redis_6379.pid   #服务进程id存放位置 </span><br><span class="line">logfile   <span class="operator">/</span>app<span class="operator">/</span>tools<span class="operator">/</span>redis_6379<span class="operator">/</span>logs<span class="operator">/</span>redis_6379.log  #服务运行日志存放位置</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-启动redis"><a href="#4-启动redis" class="headerlink" title="4.启动redis"></a>4.启动redis</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#启动</span><br><span class="line">[root<span class="variable">@db</span><span class="number">-51</span> <span class="operator">~</span>]#redis<span class="operator">-</span>server <span class="operator">/</span>app<span class="operator">/</span>tools<span class="operator">/</span>redis_6379<span class="operator">/</span>conf<span class="operator">/</span>redis_6379.conf </span><br><span class="line"></span><br><span class="line">#检查</span><br><span class="line">[root<span class="variable">@db</span><span class="number">-51</span> <span class="operator">~</span>]#netstat <span class="operator">-</span>tunlp<span class="operator">|</span>grep <span class="number">6379</span></span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">172.16</span><span class="number">.1</span><span class="number">.51</span>:<span class="number">6379</span>        <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="operator">*</span>               LISTEN      <span class="number">66213</span><span class="operator">/</span>redis<span class="operator">-</span>server  </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>          <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="operator">*</span>               LISTEN      <span class="number">66213</span><span class="operator">/</span>redis<span class="operator">-</span>server  </span><br></pre></td></tr></table></figure>
+
+<h2 id="5-登录redis"><a href="#5-登录redis" class="headerlink" title="5.登录redis"></a>5.登录redis</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#语法</span><br><span class="line">redis<span class="operator">-</span>cli <span class="operator">-</span>h 地址 <span class="operator">-</span>p 端口 <span class="operator">-</span>a 密码</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#远程登录，根据redis配置定义的运行地址，同网段登录</span><br><span class="line">redis<span class="operator">-</span>cli <span class="operator">-</span>h <span class="number">172.16</span><span class="number">.1</span><span class="number">.51</span> <span class="operator">-</span>p <span class="number">6379</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#本地登录</span><br><span class="line">[root<span class="variable">@db</span><span class="number">-51</span> <span class="operator">~</span>]#redis<span class="operator">-</span>cli</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#登录后检查是否可通信</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span><span class="operator">&gt;</span> ping</span><br><span class="line">PONG</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-关闭redis"><a href="#6-关闭redis" class="headerlink" title="6.关闭redis"></a>6.关闭redis</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>正确方式</span><br><span class="line">#登录后交互式关闭</span><br><span class="line">[root<span class="variable">@db</span><span class="number">-51</span> <span class="operator">~</span>]#redis<span class="operator">-</span>cli</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span><span class="operator">&gt;</span> shutdown</span><br><span class="line"><span class="keyword">not</span> connected<span class="operator">&gt;</span> </span><br><span class="line"></span><br><span class="line">#命令连接非交互式关闭</span><br><span class="line">redis<span class="operator">-</span>cli shutdown</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>错误方式</span><br><span class="line">#不可使用如下方式进行关闭redis，当配置了redis持久化，下方方式关闭redis会导致数据对视无法实现持久化</span><br><span class="line">kill</span><br><span class="line">pkill</span><br><span class="line">killall</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-systemctl管理"><a href="#7-systemctl管理" class="headerlink" title="7.systemctl管理"></a>7.systemctl管理</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>先关闭redis否则待会启动报错</span><br><span class="line">redis<span class="operator">-</span>cli shutdown</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>创建用户授权redis相关目录，使用安全用户运行redis</span><br><span class="line">#创建</span><br><span class="line">groupadd redis</span><br><span class="line">useradd <span class="operator">-</span>g redis <span class="operator">-</span>M <span class="operator">-</span>s <span class="operator">/</span>sbin<span class="operator">/</span>nologin redis</span><br><span class="line">id redis</span><br><span class="line">#授权</span><br><span class="line">chown <span class="operator">-</span>R redis.redis <span class="operator">/</span>app<span class="operator">/</span>redis<span class="operator">/</span>redis_6379<span class="operator">/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>书写systemctl管理redis配置脚本</span><br><span class="line">cat <span class="operator">&gt;</span> <span class="operator">/</span>usr<span class="operator">/</span>lib<span class="operator">/</span>systemd<span class="operator">/</span><span class="keyword">system</span><span class="operator">/</span>redis.service <span class="operator">&lt;&lt;</span><span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">[Unit]</span><br><span class="line">Description<span class="operator">=</span>redis service</span><br><span class="line">After<span class="operator">=</span>network.target</span><br><span class="line">After<span class="operator">=</span>network<span class="operator">-</span>online.target</span><br><span class="line">Wants<span class="operator">=</span>network<span class="operator">-</span>online.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type<span class="operator">=</span>notify</span><br><span class="line">ExecStart<span class="operator">=</span><span class="operator">/</span>usr<span class="operator">/</span><span class="keyword">local</span><span class="operator">/</span>bin<span class="operator">/</span>redis<span class="operator">-</span>server <span class="operator">/</span>app<span class="operator">/</span>redis<span class="operator">/</span>redis_6379<span class="operator">/</span>conf<span class="operator">/</span>redis_6379.conf <span class="comment">--supervised systemd</span></span><br><span class="line">ExecStop<span class="operator">=</span><span class="operator">/</span>usr<span class="operator">/</span><span class="keyword">local</span><span class="operator">/</span>bin<span class="operator">/</span>redis<span class="operator">-</span>cli shutdown</span><br><span class="line"><span class="keyword">User</span><span class="operator">=</span>redis</span><br><span class="line"><span class="keyword">Group</span><span class="operator">=</span>redis</span><br><span class="line">RuntimeDirectory<span class="operator">=</span>redis</span><br><span class="line">RuntimeDirectoryMode<span class="operator">=</span><span class="number">0755</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy<span class="operator">=</span>multi<span class="operator">-</span>user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>重新加载systemd服务程序，让systemd识别到管理配置文件变化，便可以交给systemctl管理服务</span><br><span class="line">systemctl daemon<span class="operator">-</span>reload</span><br><span class="line">#启动redis检查启动</span><br><span class="line">systemctl restart redis</span><br><span class="line">systemctl status redis</span><br><span class="line">ss <span class="operator">-</span>tunlp</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-日志警告处理"><a href="#8-日志警告处理" class="headerlink" title="8.日志警告处理"></a>8.日志警告处理</h2><blockquote>
+<p>在redis日志里，可以看到启动后的一些问题</p>
+</blockquote>
+<h3 id="8-1-优化1"><a href="#8-1-优化1" class="headerlink" title="8.1 优化1"></a>8.1 优化1</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">30 8933:C 05 Aug 2022 19:13:02.761 * supervised by systemd, will signal readiness</span><br><span class="line">31 8933:M 05 Aug 2022 19:13:02.762 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.</span><br><span class="line">32 8933:M 05 Aug 2022 19:13:02.762 # Server can&#x27;t set maximum open files to 10032 because of OS error: Operation not perm    itted.</span><br><span class="line">33 8933:M 05 Aug 2022 19:13:02.762 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensat    e for low ulimit. If you need higher maxclients increase &#x27;ulimit -n&#x27;.</span><br></pre></td></tr></table></figure>
+
+<p>修改方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">1. 给systemd服务添加参数，修改redis可打开的文件数</span><br><span class="line">[root@db-51 /opt/redis]#cat  /usr/lib/systemd/system/redis.service </span><br><span class="line">[Unit]</span><br><span class="line">Description=redis service by www.yuchaoit.cn</span><br><span class="line">After=network.target</span><br><span class="line">After=network-online.target</span><br><span class="line">Wants=network-online.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">LimitNOFILE=65536</span><br><span class="line">Type=notify</span><br><span class="line">ExecStart=/usr/local/bin/redis-server /opt/redis_6379/conf/redis_6379.conf --supervised systemd</span><br><span class="line">ExecStop=/usr/local/bin/redis-cli shutdown</span><br><span class="line">User=redis</span><br><span class="line">Group=redis</span><br><span class="line">RuntimeDirectory=redis</span><br><span class="line">RuntimeDirectoryMode=0755</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">[root@db-51 /opt/redis]#</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2.重启</span><br><span class="line">[root@db-51 /opt/redis]#systemctl daemon-reload</span><br><span class="line">[root@db-51 /opt/redis]#systemctl restart redis</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-优化2"><a href="#8-2-优化2" class="headerlink" title="8.2 优化2"></a>8.2 优化2</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">虚拟内存相关警告</span><br><span class="line"></span><br><span class="line"> 37 8933:M 05 Aug 2022 19:13:02.763 # WARNING overcommit_memory is set to 0! Background save may fail under low memory con    dition. To fix this issue add &#x27;vm.overcommit_memory = 1&#x27; to /etc/sysctl.conf and then reboot or run the command &#x27;sysct    l vm.overcommit_memory=1&#x27; for this to take effect.</span><br></pre></td></tr></table></figure>
+
+<p>解决</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">修改系统内核参数</span><br><span class="line"># 写入内核参数配置文件</span><br><span class="line">sysctl -w vm.overcommit_memory=1</span><br><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-优化3"><a href="#8-3-优化3" class="headerlink" title="8.3 优化3"></a>8.3 优化3</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">关闭THP大内存页</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> 38 8933:M 05 Aug 2022 19:13:02.763 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command &#x27;echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled&#x27; as root, and add it to your /etc/rc.local in order to retain the setting after a reboot.     Redis must be restarted after THP is disabled.</span><br></pre></td></tr></table></figure>
+
+<p>解决</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-4-优化4"><a href="#8-4-优化4" class="headerlink" title="8.4 优化4"></a>8.4 优化4</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">9099:M 05 Aug 2022 19:23:46.721 * Running mode=standalone, port=6379.</span><br><span class="line">9099:M 05 Aug 2022 19:23:46.721 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.</span><br><span class="line">9099:M 05 Aug 2022 19:23:46.721 # Server initialized</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">根据日志提示，修改即可</span><br><span class="line"></span><br><span class="line">[root@db-51 ~]#echo &quot;511&quot; &gt; /proc/sys/net/core/somaxconn </span><br><span class="line">[root@db-51 ~]#sysctl -w net.core.somaxconn=4096</span><br><span class="line">net.core.somaxconn = 4096</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>最后重启redis即可</p>
+</blockquote>
+<h2 id="9-ulimit系统优化参数"><a href="#9-ulimit系统优化参数" class="headerlink" title="9.ulimit系统优化参数"></a>9.ulimit系统优化参数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">ulimit主要是用来限制进程对资源的使用情况的，它支持各种类型的限制，常用的有：</span><br><span class="line"></span><br><span class="line">内核文件的大小限制</span><br><span class="line"></span><br><span class="line">进程数据块的大小限制</span><br><span class="line"></span><br><span class="line">Shell进程创建文件大小限制</span><br><span class="line"></span><br><span class="line">可加锁内存大小限制</span><br><span class="line"></span><br><span class="line">常驻内存集的大小限制</span><br><span class="line"></span><br><span class="line">打开文件句柄数限制</span><br><span class="line"></span><br><span class="line">分配堆栈的最大大小限制</span><br><span class="line"></span><br><span class="line">CPU占用时间限制用户最大可用的进程数限制</span><br><span class="line"></span><br><span class="line">Shell进程所能使用的最大虚拟内存限制</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@db-51 /opt/redis]#ulimit -a</span><br><span class="line">core file size          (blocks, -c) 0</span><br><span class="line">data seg size           (kbytes, -d) unlimited</span><br><span class="line">scheduling priority             (-e) 0</span><br><span class="line">file size               (blocks, -f) unlimited</span><br><span class="line">pending signals                 (-i) 14996</span><br><span class="line">max locked memory       (kbytes, -l) 64</span><br><span class="line">max memory size         (kbytes, -m) unlimited</span><br><span class="line">open files                      (-n) 1024</span><br><span class="line">pipe size            (512 bytes, -p) 8</span><br><span class="line">POSIX message queues     (bytes, -q) 819200</span><br><span class="line">real-time priority              (-r) 0</span><br><span class="line">stack size              (kbytes, -s) 8192</span><br><span class="line">cpu time               (seconds, -t) unlimited</span><br><span class="line">max user processes              (-u) 14996</span><br><span class="line">virtual memory          (kbytes, -v) unlimited</span><br><span class="line">file locks                      (-x) unlimited</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="10-配置文件更多参数说明"><a href="#10-配置文件更多参数说明" class="headerlink" title="10.配置文件更多参数说明"></a>10.配置文件更多参数说明</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">daemonize no  #默认redis前台运行，修改yes放入后台守护进程运行，pid写入redis.pid</span><br><span class="line"></span><br><span class="line">pidfile  /var/run/redis_6379.pid  # 运行多redis实例的话，需要区分pid、配置文件</span><br><span class="line"></span><br><span class="line">port 6379 # 默认redis链接端口</span><br><span class="line"></span><br><span class="line">tcp-backlog 511 # 在高并发系统中，你需要设置一个较高的tcp-backlog来避免客户端连接速度慢的问题（三次握手的速度）。</span><br><span class="line"></span><br><span class="line">bind 127.0.0.1 0.0.0.0  # 设置redis运行地址，走内网，还是允许公网访问</span><br><span class="line"></span><br><span class="line">timeout 0 # 客户端连接的超时时间 ，0 是关闭功能</span><br></pre></td></tr></table></figure>
+
+<p>详解配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br></pre></td><td class="code"><pre><span class="line"># 慢查询最大的条数，当slowlog超过设定的最大值后，会将最早的slowlog删除，是个FIFO队列</span><br><span class="line">slowlog-max-len 128</span><br><span class="line"></span><br><span class="line">################################ LATENCY MONITOR ##############################</span><br><span class="line"></span><br><span class="line"># Redis延迟监视子系统在运行时对不同的操作进行采样，以便收集可能导致延时的数据根源。</span><br><span class="line">#</span><br><span class="line"># 通过LATENCY命令，可以打印图表并获取报告。</span><br><span class="line">#</span><br><span class="line"># 系统仅记录在等于或大于 latency-monitor-threshold 指定的毫秒数的时间内执行的操作。 当其值设置为0时，将关闭延迟监视器。</span><br><span class="line">#</span><br><span class="line"># 默认情况下，延迟监视被禁用，因为如果您没有延迟问题，则通常不需要延迟监视，并且收集数据会对性能产生影响，虽然非常小。 </span><br><span class="line"># 如果需要，可以使用命令“CONFIG SET latency-monitor-threshold &lt;milliseconds&gt;”在运行时轻松启用延迟监视。</span><br><span class="line">latency-monitor-threshold 0</span><br><span class="line"></span><br><span class="line">############################# EVENT NOTIFICATION ##############################</span><br><span class="line"></span><br><span class="line"># Redis可以向Pub / Sub客户端通知键空间发生的事件。</span><br><span class="line">#</span><br><span class="line"># 例如，如果启用了键空间事件通知，并且客户端对存储在数据库0中的键 foo 执行DEL操作，则将通过Pub / Sub发布两条消息:</span><br><span class="line">#</span><br><span class="line"># PUBLISH __keyspace@0__:foo del</span><br><span class="line"># PUBLISH __keyevent@0__:del foo</span><br><span class="line"># 以 keyspace 为前缀的频道被称为键空间通知（key-space notification）， 而以 keyevent 为前缀的频道则被称为键事件通知（key-event notification）。</span><br><span class="line"># It is possible to select the events that Redis will notify among a set</span><br><span class="line"># of classes. Every class is identified by a single character:</span><br><span class="line">#</span><br><span class="line">#  K     键空间通知，所有通知以 __keyspace@&lt;db&gt;__ 为前缀.</span><br><span class="line">#  E     键事件通知，所有通知以 __keyevent@&lt;db&gt;__ 为前缀</span><br><span class="line">#  g     DEL 、 EXPIRE 、 RENAME 等类型无关的通用命令的通知</span><br><span class="line">#  $     字符串命令的通知</span><br><span class="line">#  l     列表命令的通知</span><br><span class="line">#  s     集合命令的通知</span><br><span class="line">#  h     哈希命令的通知</span><br><span class="line">#  z     有序集合命令的通知</span><br><span class="line">#  x     过期事件：每当有过期键被删除时发送</span><br><span class="line">#  e     驱逐(evict)事件：每当有键因为 maxmemory 策略而被删除时发送</span><br><span class="line">#  A     参数 g$lshzxe 的别名</span><br><span class="line">#</span><br><span class="line"># 输入的参数中至少要有一个 K 或者 E ， 否则的话， 不管其余的参数是什么， 都不会有任何通知被分发。</span><br><span class="line"># 如果只想订阅键空间中和列表相关的通知， 那么参数就应该设为 Kl。将参数设为字符串 &quot;AKE&quot; 表示发送所有类型的通知。</span><br><span class="line">notify-keyspace-events &quot;&quot;</span><br><span class="line"></span><br><span class="line">############################### ADVANCED CONFIG ###############################</span><br><span class="line"></span><br><span class="line"># hash类型的数据结构在编码上可以使用ziplist和hashtable。</span><br><span class="line"># ziplist的特点就是文件存储(以及内存存储)所需的空间较小,在内容较小时,性能和hashtable几乎一样。</span><br><span class="line"># 因此redis对hash类型默认采取ziplist。如果hash中条目个数或者value长度达到阀值,内部编码将使用hashtable。</span><br><span class="line"># 这个参数指的是ziplist中允许存储的最大条目个数，默认为512，建议为128</span><br><span class="line">hash-max-ziplist-entries 512</span><br><span class="line"># ziplist中允许条目value值最大字节数，默认为64，建议为1024</span><br><span class="line">hash-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"># 当取正值的时候，表示按照数据项个数来限定每个quicklist节点上的ziplist长度。比如，当这个参数配置成5的时候，表示每个quicklist节点的ziplist最多包含5个数据项。</span><br><span class="line"># 当取负值的时候，表示按照占用字节数来限定每个quicklist节点上的ziplist长度。这时，它只能取-1到-5这五个值</span><br><span class="line"># -5: max size: 64 Kb  &lt;-- not recommended for normal workloads</span><br><span class="line"># -4: max size: 32 Kb  &lt;-- not recommended</span><br><span class="line"># -3: max size: 16 Kb  &lt;-- probably not recommended</span><br><span class="line"># -2: max size: 8 Kb   &lt;-- good</span><br><span class="line"># -1: max size: 4 Kb   &lt;-- good</span><br><span class="line"># 性能最高的选项通常为-2（8 Kb大小）或-1（4 Kb大小）。</span><br><span class="line">list-max-ziplist-size -2</span><br><span class="line"></span><br><span class="line"># 一个quicklist两端不被压缩的节点个数</span><br><span class="line"># 参数list-compress-depth的取值含义如下：</span><br><span class="line"># 0: 表示都不压缩。这是Redis的默认值</span><br><span class="line"># 1: 表示quicklist两端各有1个节点不压缩，中间的节点压缩。</span><br><span class="line">#    So: [head]-&gt;node-&gt;node-&gt;...-&gt;node-&gt;[tail]</span><br><span class="line">#    [head], [tail] 不压缩; 内部节点将被压缩.</span><br><span class="line"># 2: [head]-&gt;[next]-&gt;node-&gt;node-&gt;...-&gt;node-&gt;[prev]-&gt;[tail]</span><br><span class="line">#    2：表示quicklist两端各有2个节点不压缩，中间的节点压缩</span><br><span class="line"># 3: [head]-&gt;[next]-&gt;[next]-&gt;node-&gt;node-&gt;...-&gt;node-&gt;[prev]-&gt;[prev]-&gt;[tail]</span><br><span class="line"># 3: 表示quicklist两端各有3个节点不压缩，中间的节点压缩。</span><br><span class="line"># etc.</span><br><span class="line">list-compress-depth 0</span><br><span class="line"></span><br><span class="line"># 数据量小于等于512用intset，大于512用set</span><br><span class="line">set-max-intset-entries 512</span><br><span class="line"></span><br><span class="line"># 数据量小于等于zset-max-ziplist-entries用ziplist，大于zset-max-ziplist-entries用zset</span><br><span class="line">zset-max-ziplist-entries 128</span><br><span class="line">zset-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"># value大小小于等于hll-sparse-max-bytes使用稀疏数据结构（sparse）</span><br><span class="line"># 大于hll-sparse-max-bytes使用稠密的数据结构（dense），一个比16000大的value是几乎没用的，</span><br><span class="line"># 建议的value大概为3000。如果对CPU要求不高，对空间要求较高的，建议设置到10000左右</span><br><span class="line">hll-sparse-max-bytes 3000</span><br><span class="line"></span><br><span class="line">#Streams宏节点最大大小。流数据结构是基数编码内部多个项目的大节点树。使用此配置</span><br><span class="line">#可以配置单个节点的字节数，以及切换到新节点之前可能包含的最大项目数</span><br><span class="line">#追加新的流条目。如果以下任何设置设置为0，忽略限制，因此例如可以设置一个</span><br><span class="line">#大入口限制将max-bytes设置为0，将max-entries设置为所需的值</span><br><span class="line">stream-node-max-bytes 4096</span><br><span class="line">stream-node-max-entries 100</span><br><span class="line"></span><br><span class="line"># 主动重新散列每100毫秒CPU时间使用1毫秒，以帮助重新散列主Redis散列表（将顶级键映射到值）。 </span><br><span class="line"># Redis使用的散列表实现（请参阅dict.c）执行延迟重新散列：您在重新散列的散列表中运行的操作越多，执行的重复“步骤”就越多，</span><br><span class="line"># 因此如果服务器处于空闲状态，则重新散列将永远不会完成 哈希表使用了一些内存。</span><br><span class="line">activerehashing yes</span><br><span class="line"></span><br><span class="line"># 对客户端输出缓冲进行限制可以强迫那些不从服务器读取数据的客户端断开连接，用来强制关闭传输缓慢的客户端。</span><br><span class="line"># 对于normal client，第一个0表示取消hard limit，第二个0和第三个0表示取消soft limit，normal client默认取消限制</span><br><span class="line">client-output-buffer-limit normal 0 0 0</span><br><span class="line"></span><br><span class="line"># 对于slave client和MONITER client，如果client-output-buffer一旦超过256mb，又或者超过64mb持续60秒，那么服务器就会立即断开客户端连接。</span><br><span class="line">client-output-buffer-limit replica 256mb 64mb 60</span><br><span class="line"></span><br><span class="line"># 对于pubsub client，如果client-output-buffer一旦超过32mb，又或者超过8mb持续60秒，那么服务器就会立即断开客户端连接。</span><br><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br><span class="line"></span><br><span class="line"># 客户端查询缓冲区累积新命令。 默认情况下，它被限制为固定数量，以避免协议失步（例如由于客户端中的错误）将导致查询缓冲区中的未绑定内存使用。 </span><br><span class="line"># 但是，如果您有非常特殊的需求，可以在此配置它，例如我们巨大执行请求。</span><br><span class="line">#</span><br><span class="line"># client-query-buffer-limit 1gb</span><br><span class="line"></span><br><span class="line"># 在Redis协议中，批量请求（即表示单个字符串的元素）通常限制为512 MB。 但是，您可以在此更改此限制。</span><br><span class="line">#</span><br><span class="line"># proto-max-bulk-len 512mb</span><br><span class="line"></span><br><span class="line"># Redis调用内部函数来执行许多后台任务，例如在超时时关闭客户端的连接，清除从未请求过期的过期密钥等等。</span><br><span class="line">#</span><br><span class="line"># 并非所有任务都以相同的频率执行，但Redis会根据指定的“hz”值检查要执行的任务。</span><br><span class="line">#</span><br><span class="line"># 默认情况下，hz设置为10.提高值时，在Redis处于空闲状态下，将使用更多CPU</span><br><span class="line"># 但同时，当有很多键同时到期时，Redis会响应更快，并且可以更精确地处理超时。</span><br><span class="line">#  </span><br><span class="line"># 范围介于1到500之间，但超过100的值通常不是一个好主意。 大多数用户应使用默认值10，除非仅在需要非常低延迟的环境中将此值提高到100。</span><br><span class="line">hz 10</span><br><span class="line"></span><br><span class="line"># 通常，推荐使HZ的值与连接的客户端数量成比例。这有助于避免为每个后台任务调用处理太多客户端，以避免延迟峰值。</span><br><span class="line">#</span><br><span class="line"># 默认情况下默认的HZ值为10。Redis 提供并启用自适应HZ值的功能，当有很多连接的客户端时，该值会临时增加。</span><br><span class="line">#</span><br><span class="line"># 启用动态HZ时，实际配置的HZ将用作基线，但是一旦连接了更多客户端，将根据实际需要使用配置的HZ值的倍数。 </span><br><span class="line"># 通过这种方式，空闲实例将使用非常少的CPU时间，而繁忙的实例将更具响应性。</span><br><span class="line">dynamic-hz yes</span><br><span class="line"></span><br><span class="line"># 当一个子进程重写AOF文件时，如果启用下面的选项，则文件每生成32M数据会被同步。</span><br><span class="line">aof-rewrite-incremental-fsync yes</span><br><span class="line"></span><br><span class="line"># 当redis保存RDB文件时，如果启用了以下选项，则每生成32 MB数据将对文件进行fsync。 这对于以递增方式将文件提交到磁盘并避免大延迟峰值非常有用。</span><br><span class="line">rdb-save-incremental-fsync yes</span><br><span class="line"></span><br><span class="line"># 可以调整Redis LFU（参见maxmemory设置）。 但是，最好使用默认设置，仅在调查如何改进性能以及LFU如何随时间变化后更改它们，这可以通过OBJECT FREQ命令进行检查。</span><br><span class="line">#</span><br><span class="line"># Redis LFU实现中有两个可调参数：计数器对数因子和计数器衰减时间。 在更改它们之前，了解这两个参数的含义非常重要。</span><br><span class="line">#</span><br><span class="line"># LFU计数器每个键只有8位，它的最大值是255，因此Redis使用具有对数行为的概率增量。 给定旧计数器的值，当访问密钥时，计数器以这种方式递增：</span><br><span class="line">#</span><br><span class="line"># 1. A random number R between 0 and 1 is extracted.</span><br><span class="line"># 2. A probability P is calculated as 1/(old_value*lfu_log_factor+1).</span><br><span class="line"># 3. The counter is incremented only if R &lt; P.</span><br><span class="line">#</span><br><span class="line"># The default lfu-log-factor is 10. This is a table of how the frequency</span><br><span class="line"># counter changes with a different number of accesses with different</span><br><span class="line"># logarithmic factors:</span><br><span class="line">#</span><br><span class="line"># +--------+------------+------------+------------+------------+------------+</span><br><span class="line"># | factor | 100 hits   | 1000 hits  | 100K hits  | 1M hits    | 10M hits   |</span><br><span class="line"># +--------+------------+------------+------------+------------+------------+</span><br><span class="line"># | 0      | 104        | 255        | 255        | 255        | 255        |</span><br><span class="line"># +--------+------------+------------+------------+------------+------------+</span><br><span class="line"># | 1      | 18         | 49         | 255        | 255        | 255        |</span><br><span class="line"># +--------+------------+------------+------------+------------+------------+</span><br><span class="line"># | 10     | 10         | 18         | 142        | 255        | 255        |</span><br><span class="line"># +--------+------------+------------+------------+------------+------------+</span><br><span class="line"># | 100    | 8          | 11         | 49         | 143        | 255        |</span><br><span class="line"># +--------+------------+------------+------------+------------+------------+</span><br><span class="line">#</span><br><span class="line"># NOTE: The above table was obtained by running the following commands:</span><br><span class="line">#</span><br><span class="line">#   redis-benchmark -n 1000000 incr foo</span><br><span class="line">#   redis-cli object freq foo</span><br><span class="line">#</span><br><span class="line"># NOTE 2: The counter initial value is 5 in order to give new objects a chance</span><br><span class="line"># to accumulate hits.</span><br><span class="line">#</span><br><span class="line"># The counter decay time is the time, in minutes, that must elapse in order</span><br><span class="line"># for the key counter to be divided by two (or decremented if it has a value</span><br><span class="line"># less &lt;= 10).</span><br><span class="line">#</span><br><span class="line"># The default value for the lfu-decay-time is 1. A Special value of 0 means to</span><br><span class="line"># decay the counter every time it happens to be scanned.</span><br><span class="line">#</span><br><span class="line"># lfu-log-factor 10</span><br><span class="line"># lfu-decay-time 1</span><br><span class="line"></span><br><span class="line">########################### ACTIVE DEFRAGMENTATION #######################</span><br><span class="line">#</span><br><span class="line"># WARNING THIS FEATURE IS EXPERIMENTAL. However it was stress tested</span><br><span class="line"># even in production and manually tested by multiple engineers for some</span><br><span class="line"># time.</span><br><span class="line">#</span><br><span class="line"># What is active defragmentation?</span><br><span class="line"># -------------------------------</span><br><span class="line">#</span><br><span class="line"># Active (online) defragmentation allows a Redis server to compact the</span><br><span class="line"># spaces left between small allocations and deallocations of data in memory,</span><br><span class="line"># thus allowing to reclaim back memory.</span><br><span class="line">#</span><br><span class="line"># Fragmentation is a natural process that happens with every allocator (but</span><br><span class="line"># less so with Jemalloc, fortunately) and certain workloads. Normally a server</span><br><span class="line"># restart is needed in order to lower the fragmentation, or at least to flush</span><br><span class="line"># away all the data and create it again. However thanks to this feature</span><br><span class="line"># implemented by Oran Agra for Redis 4.0 this process can happen at runtime</span><br><span class="line"># in an &quot;hot&quot; way, while the server is running.</span><br><span class="line">#</span><br><span class="line"># Basically when the fragmentation is over a certain level (see the</span><br><span class="line"># configuration options below) Redis will start to create new copies of the</span><br><span class="line"># values in contiguous memory regions by exploiting certain specific Jemalloc</span><br><span class="line"># features (in order to understand if an allocation is causing fragmentation</span><br><span class="line"># and to allocate it in a better place), and at the same time, will release the</span><br><span class="line"># old copies of the data. This process, repeated incrementally for all the keys</span><br><span class="line"># will cause the fragmentation to drop back to normal values.</span><br><span class="line">#</span><br><span class="line"># Important things to understand:</span><br><span class="line">#</span><br><span class="line"># 1. This feature is disabled by default, and only works if you compiled Redis</span><br><span class="line">#    to use the copy of Jemalloc we ship with the source code of Redis.</span><br><span class="line">#    This is the default with Linux builds.</span><br><span class="line">#</span><br><span class="line"># 2. You never need to enable this feature if you don&#x27;t have fragmentation</span><br><span class="line">#    issues.</span><br><span class="line">#</span><br><span class="line"># 3. Once you experience fragmentation, you can enable this feature when</span><br><span class="line">#    needed with the command &quot;CONFIG SET activedefrag yes&quot;.</span><br><span class="line">#</span><br><span class="line"># The configuration parameters are able to fine tune the behavior of the</span><br><span class="line"># defragmentation process. If you are not sure about what they mean it is</span><br><span class="line"># a good idea to leave the defaults untouched.</span><br><span class="line"></span><br><span class="line"># 启用主动碎片整理</span><br><span class="line"># activedefrag yes</span><br><span class="line"></span><br><span class="line"># 启动活动碎片整理的最小碎片浪费量</span><br><span class="line"># active-defrag-ignore-bytes 100mb</span><br><span class="line"></span><br><span class="line"># 启动碎片整理的最小碎片百分比</span><br><span class="line"># active-defrag-threshold-lower 10</span><br><span class="line"></span><br><span class="line"># 使用最大消耗时的最大碎片百分比</span><br><span class="line"># active-defrag-threshold-upper 100</span><br><span class="line"></span><br><span class="line"># 在CPU百分比中进行碎片整理的最小消耗</span><br><span class="line"># active-defrag-cycle-min 5</span><br><span class="line"></span><br><span class="line"># 在CPU百分比达到最大值时，进行碎片整理</span><br><span class="line"># active-defrag-cycle-max 75</span><br><span class="line"></span><br><span class="line"># 从set / hash / zset / list 扫描的最大字段数</span><br><span class="line"># active-defrag-max-scan-fields 1000</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://example.com">赵东兴</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://example.com/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%8E%9F%E7%90%86%E9%83%A8%E7%BD%B2/">http://example.com/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%8E%9F%E7%90%86%E9%83%A8%E7%BD%B2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="数据库Redis-数据类型"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Previous</div><div class="prev_info">数据库Redis-数据类型</div></div></a></div><div class="next-post pull-right"><a href="/2024/08/20/%E9%98%B2%E7%81%AB%E5%A2%99iptables-%E5%91%BD%E4%BB%A4%E5%BA%94%E7%94%A8/" title="防火墙iptables-命令应用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next</div><div class="next_info">防火墙iptables-命令应用</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">赵东兴</div><div class="author-info__description">个人技术笔记博客</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#redis%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">redis概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8redis"><span class="toc-number">1.1.</span> <span class="toc-text">1.为什么使用redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%85%B3%E7%B3%BB%E5%9E%8B%E4%B8%8E%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">2.关系型与非关系型数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-redis%E7%89%B9%E7%82%B9"><span class="toc-number">1.3.</span> <span class="toc-text">3.redis特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF-%E6%A0%B8%E5%BF%83"><span class="toc-number">1.4.</span> <span class="toc-text">4.redis应用场景-核心</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#redis5-0%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2"><span class="toc-number">2.</span> <span class="toc-text">redis5.0安装部署</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%89%88%E6%9C%AC%E9%80%89%E6%8B%A9"><span class="toc-number">2.1.</span> <span class="toc-text">1.版本选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2"><span class="toc-number">2.2.</span> <span class="toc-text">2.安装部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">2.3.</span> <span class="toc-text">3.配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%90%AF%E5%8A%A8redis"><span class="toc-number">2.4.</span> <span class="toc-text">4.启动redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%99%BB%E5%BD%95redis"><span class="toc-number">2.5.</span> <span class="toc-text">5.登录redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%85%B3%E9%97%ADredis"><span class="toc-number">2.6.</span> <span class="toc-text">6.关闭redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-systemctl%E7%AE%A1%E7%90%86"><span class="toc-number">2.7.</span> <span class="toc-text">7.systemctl管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E6%97%A5%E5%BF%97%E8%AD%A6%E5%91%8A%E5%A4%84%E7%90%86"><span class="toc-number">2.8.</span> <span class="toc-text">8.日志警告处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E4%BC%98%E5%8C%961"><span class="toc-number">2.8.1.</span> <span class="toc-text">8.1 优化1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E4%BC%98%E5%8C%962"><span class="toc-number">2.8.2.</span> <span class="toc-text">8.2 优化2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-%E4%BC%98%E5%8C%963"><span class="toc-number">2.8.3.</span> <span class="toc-text">8.3 优化3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-4-%E4%BC%98%E5%8C%964"><span class="toc-number">2.8.4.</span> <span class="toc-text">8.4 优化4</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-ulimit%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96%E5%8F%82%E6%95%B0"><span class="toc-number">2.9.</span> <span class="toc-text">9.ulimit系统优化参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%9B%B4%E5%A4%9A%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="toc-number">2.10.</span> <span class="toc-text">10.配置文件更多参数说明</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E6%9C%8D%E5%8A%A1%E4%BC%98%E5%8C%96/" title="数据库Redis-服务优化">数据库Redis-服务优化</a><time datetime="2024-08-20T03:44:08.000Z" title="Created 2024-08-20 11:44:08">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%88%86%E5%B8%83%E9%9B%86%E7%BE%A4/" title="数据库Redis-分布集群">数据库Redis-分布集群</a><time datetime="2024-08-20T03:43:56.000Z" title="Created 2024-08-20 11:43:56">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%93%A8%E5%85%B5%E5%8A%9F%E8%83%BD/" title="数据库Redis-哨兵功能">数据库Redis-哨兵功能</a><time datetime="2024-08-20T03:43:39.000Z" title="Created 2024-08-20 11:43:39">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="数据库Redis-主从复制">数据库Redis-主从复制</a><time datetime="2024-08-20T03:43:24.000Z" title="Created 2024-08-20 11:43:24">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85/" title="数据库Redis-数据持久">数据库Redis-数据持久</a><time datetime="2024-08-20T03:43:10.000Z" title="Created 2024-08-20 11:43:10">2024-08-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 赵东兴</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

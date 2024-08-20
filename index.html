@@ -53,7 +53,7 @@
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2024-08-20 11:41:13'
+  postUpdate: '2024-08-20 12:06:34'
 }</script><script>(win=>{
       win.saveToLocal = {
         set: (key, value, ttl) => {
@@ -151,7 +151,82 @@
       }
       detectApple()
     })(window)</script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="一往无前虎山行,拨开云雾见光明" type="application/atom+xml">
-</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url('/./img/linux.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="一往无前虎山行,拨开云雾见光明"><span class="site-name">一往无前虎山行,拨开云雾见光明</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">一往无前虎山行,拨开云雾见光明</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E9%98%B2%E7%81%AB%E5%A2%99iptables-%E5%91%BD%E4%BB%A4%E5%BA%94%E7%94%A8/" title="防火墙iptables-命令应用">防火墙iptables-命令应用</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:25:18.000Z" title="Created 2024-08-20 11:25:18">2024-08-20</time></span></div><div class="content">iptables使用指南1.命令语法iptables会根据如下设定的条件对数据包信息进行过滤，如果匹配到和条件相符的信息对数据包进行动作处理
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url('/./img/linux.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="一往无前虎山行,拨开云雾见光明"><span class="site-name">一往无前虎山行,拨开云雾见光明</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">一往无前虎山行,拨开云雾见光明</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E6%9C%8D%E5%8A%A1%E4%BC%98%E5%8C%96/" title="数据库Redis-服务优化">数据库Redis-服务优化</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:44:08.000Z" title="Created 2024-08-20 11:44:08">2024-08-20</time></span></div><div class="content">redis安全优化
+redis被攻击，作为突破口，服务器惨遭毒手的事太常见了。大多数云服务器被攻击，都是redis，mongodb等数据库被入侵。
+因此修改端口，密码，以及注意bind运行地址，是必须操作。思考是否要暴露redis到公网。
+
+1.运行地址修改Redis的主流运行环境通常是在内网中，原因如下：
+
+安全性考虑：Redis存储的数据可能包含敏感信息，因此在公网上暴露可能会增加数据泄露的风险。内网运行可以提供更高的安全性，因为内网的访问控制通常比公网更为严格。
+性能优化：内网环境通常具有更低的网络延迟和更高的带宽，这有助于Redis提供更好的性能和更高的数据吞吐量。
+隔离性：内网运行可以更好地隔离Redis服务，避免受到来自公网的恶意攻击或干扰。
+
+尽管在内网中运行是主流，但也有一些情况下Redis会在公网上运行：
+
+缓存服务：一些云服务或第三方缓存服务可能会提供公开的Redis缓存实例，用于加速网站内容的加载。
+API服务：某些应用程序可能通过公网提供RESTful API服务，这些API服务可能会使用Redis来存储会话状态或缓存数据。
+游戏服务器：在线游戏服务器可能会使用 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%88%86%E5%B8%83%E9%9B%86%E7%BE%A4/" title="数据库Redis-分布集群">数据库Redis-分布集群</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:43:56.000Z" title="Created 2024-08-20 11:43:56">2024-08-20</time></span></div><div class="content">redis-cluster集群概述1.集群是什么
+cluser是一个redis实现分布式管理数据的功能
+
+Redis Cluster 是 Redis 分布式解决方案，它可以让我们将 Redis 数据库分布在多个节点上，实现数据的高可用性和扩展性。简单来说，就是把一个大的 Redis 数据库拆分成多个小的部分，并将这些部分分布在不同的服务器上，这些服务器被称为节点。
+每个节点都存储着部分数据，并且节点之间通过主从复制来保持数据的一致性。当有新的节点加入集群或者节点出现故障时，Redis Cluster 会自动进行数据的重新分配和故障转移，确保数据的可用性和系统的稳定性。
+通过使用 Redis Cluster，我们可以横向扩展 Redis 数据库的容量和性能，以应对大规模数据和高并发请求的需求。同时，它还提供了简单易用的管理工具和命令，方便我们对集群进行配置和监控。
+总结起来，Redis Cluster 就是一个可以将 Redis 数据库分布在多个节点上，并提供高可用性和可扩展性的解决方案，帮助我们构建分布式的 Redis 服务。
+分布式系统的含义
+分布式是指将一个系统中的不同组件或节点分 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%93%A8%E5%85%B5%E5%8A%9F%E8%83%BD/" title="数据库Redis-哨兵功能">数据库Redis-哨兵功能</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:43:39.000Z" title="Created 2024-08-20 11:43:39">2024-08-20</time></span></div><div class="content">redis哨兵原理官网资料：https://redis.io/docs/manual/sentinel/#sentinels-and-replicas-auto-discovery 
+在上文主从复制的基础上，如果注节点出现故障该怎么办呢？
+在 Redis 主从集群中，哨兵机制是实现主从库故障自动切换的关键机制，它有效地解决了主从复制模式下故障转移的问题。
+1.哨兵机制是什么
+Redis Sentinel，也叫哨兵，在Redis 2.8版本开始引入，核心功能是对主从集群中的master节点的实现自动故障转移。
+
+哨兵（Sentinel）机制是Redis提供的一种用于实现高可用性（High Availability）的解决方案。它允许用户监控Redis实例，并在主服务器发生故障时自动进行故障转移。哨兵机制由哨兵进程组成，这些进程定期检查主服务器和从服务器的健康状态，当主服务器出现故障时，哨兵会协调从服务器中选出一个新的主服务器，以确保系统的连续性。哨兵还能够处理其他故障转移相关的任务，比如通知客户端新的主服务器地址，以及监控故障服务器的恢复。
+
+总的来说，哨兵机制是一种用于监控、自动故障转 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="数据库Redis-主从复制">数据库Redis-主从复制</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:43:24.000Z" title="Created 2024-08-20 11:43:24">2024-08-20</time></span></div><div class="content">redis主从复制概述
+我们知道要避免单点故障，即保证高可用，便需要冗余（添加副本&#x2F;salave节点）方式提供集群服务。
+而Redis 提供了主从库模式，以保证数据副本的一致，主从库之间采用的是读写分离的方式。
+redis的主从复制关系中从节点默认只能接收读的请求
+
+1.主从复制概述
+Redis主从复制是指在Redis中设置一个主服务器（master）和多个从服务器（slaves），主服务器将自身的数据复制到从服务器上。这样可以实现数据的备份和读写分离。
+主从复制主要有以下几个特点：
+
+数据备份：主从复制可以实现数据的备份和容灾，如果主服务器发生故障，从服务器可以接管服务，保证数据不丢失。（引入哨兵功能）
+读写分离：主服务器负责处理写操作，而从服务器可以负责处理读操作，从而分担主服务器的负载。
+扩展性：通过添加多个从服务器，可以扩展系统的读取能力，提高系统的并发处理能力。
+
+2.主从复制作用
+
+数据冗余和备份：通过主从复制，可以在从节点上创建数据的冗余备份，以防止主节点发生故障时造成数据丢失。
+负载均衡：主从复制可以分担主节点的读取负载，从而提高系统的读取性能。读取请求可以分 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85/" title="数据库Redis-数据持久">数据库Redis-数据持久</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:43:10.000Z" title="Created 2024-08-20 11:43:10">2024-08-20</time></span></div><div class="content">redis数据持久化概述1.为什么需要持久化数据安全：持久化可以确保数据在发生意外情况（如服务器故障、断电等）时不会丢失，从而保障数据的安全性。
+数据恢复：通过持久化，可以在系统重启后快速地将数据加载到内存中，从而实现数据的快速恢复。
+数据复制：持久化可以作为备份手段，用于将数据复制到其他地方，以便在需要时进行恢复或者迁移数据。
+2.什么情况会数据丢失
+1.没有配置数据持久化方案，服务器突然断电导致服务挂掉
+2.没有配置数据持久化方案，服务突然挂掉再次重启，
+3.不友好中断服务，kill，pkill，killall
+
+3.数据持久化方案
+RDB（Redis 数据库备份）持久化
+RDB是根据配置的频率进行对某个时间的数据进行快照保存将当时的数据写入文件中
+优点：数据保存的是二进制数据占用磁盘资源小，并且恢复时很快因为数据文件小
+缺点：根据设置的保存点进行RDB，当没有触发特定条件，发生故障数据会出现部分丢失
+
+
+特点:
+RDB 是一种在指定时间间隔内保存 Redis 数据集的快照的持久化方式。
+通过将数据集的快照写入磁盘文件，以保存数据的当前状态。
+RDB 适合于备份数据、灾难恢复等场景 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="数据库Redis-数据类型">数据库Redis-数据类型</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:42:59.000Z" title="Created 2024-08-20 11:42:59">2024-08-20</time></span></div><div class="content">redis全局命令1.redis数据存储格式在 Redis 中，数据是以键值对的形式进行存储的，每个键都是唯一的，而值则可以是各种不同类型的数据
+不同类型的键值对可以存储在 Redis 中，以下是一些常见的数据存储格式示例：
+1234567891011121314151617181920#字符串键值对key1: &quot;value1&quot;key2: &quot;value2&quot;#哈希表键值对user:1:     name: &quot;John&quot;    age: 30user:2:    name: &quot;Alice&quot;    age: 25    #列表键值对queue: [item1, item2, item3]#集合键值对set: &#123;member1, member2, member3&#125;#有序集合键值对sorted_set: &#123;member1, member2, member3&#125; with scores
+
+
+这些是 Redis 中键值对存储格式的一些示例，实际上 Redis 支持多种不同的数据结构， ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%8E%9F%E7%90%86%E9%83%A8%E7%BD%B2/" title="数据库Redis-原理部署">数据库Redis-原理部署</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:42:48.000Z" title="Created 2024-08-20 11:42:48">2024-08-20</time></span></div><div class="content">redis概述阿里云redis文档https://help.aliyun.com/product/26340.html
+1.为什么使用redis
+快速的读写速度：Redis是一个基于内存的数据存储系统，因此具有非常快速的读写速度。这使得它非常适合用作缓存系统，可以大大提高应用程序的性能和响应速度。
+支持丰富的数据结构：Redis支持多种数据结构，如字符串、哈希、列表、集合、有序集合等，这使得它可以灵活地处理各种类型的数据，并且支持丰富的操作。这使得Redis不仅仅可以用作缓存，还可以用于实时统计、计数、排行榜等功能。
+高可用性和可扩展性：Redis支持主从复制和集群模式，可以提供高可用性和横向扩展能力。这使得Redis可以应对大规模的数据存储和高并发访问。
+持久化和数据备份：Redis支持将数据持久化到磁盘，这意味着即使发生服务器重启，数据也不会丢失。同时，Redis还支持数据的定期备份和恢复，能够有效地保障数据的安全性和可靠性。
+支持丰富的应用场景：除了作为缓存系统外，Redis还可以用于会话存储、消息队列、实时分析、地理位置查询等多种应用场景。它的灵活性和高性能使得它在各种领域都有 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E9%98%B2%E7%81%AB%E5%A2%99iptables-%E5%91%BD%E4%BB%A4%E5%BA%94%E7%94%A8/" title="防火墙iptables-命令应用">防火墙iptables-命令应用</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:25:18.000Z" title="Created 2024-08-20 11:25:18">2024-08-20</time></span></div><div class="content">iptables使用指南1.命令语法iptables会根据如下设定的条件对数据包信息进行过滤，如果匹配到和条件相符的信息对数据包进行动作处理
 命令执行需按参数顺序进行定义，不指定参数默认表示所有
 
 2.参数大全
@@ -176,66 +251,4 @@
 在企业网络中，防火墙可以设立规则，比如可以限制特定的网站或应用程序的访问，也可以防止网络中的计算机受到来自外部的攻击。这样可以保护网络安全，防止敏感数据被盗取，也可以防止网络遭受恶意软件和病毒的攻击。
 总之，防火墙就是一个保护计算机和网络安全的关键设备，它通过监控和控制网络流量，来保护网络不受到未经授权的访问和攻击。
 2.防火墙作用防火墙就像是一扇大门，它可以帮助筛选和控制从外部进入或者离开网络的数据流量。防火墙的作用就是保护网络安全，它可以阻止不安全的数据包进入网络，防止恶意攻击和未经授权的访问。这样就像是给网络和计算机装上了一把锁，保护其免受威胁和攻击。
-3 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E8%99%9A%E6%8B%9F%E5%8C%96KVM-%E5%8A%9F%E8%83%BD%E5%91%BD%E4%BB%A4/" title="虚拟化KVM-功能命令">虚拟化KVM-功能命令</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:23:42.000Z" title="Created 2024-08-20 11:23:42">2024-08-20</time></span></div><div class="content">kvm生产实践1.虚拟机删除1.1正常删除12345678910111213141516171819202122232425262728293031323334353637383940414243444546#准备环境创建一个虚拟机[root@kvm-host ~]#virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name kvm-web02 --memory 2048,maxmemory=4096 --vcpus 2,maxvcpus=8  --disk /kvm_data/kvm-web02.raw,format=raw,size=10 --cdrom  /kvm_data/CentOS-7-x86_64-DVD-2009.iso --network network=default --graphics vnc,listen=0.0.0.0  --noautoconsole#检查生成的磁盘镜像文件与配置[root@kvm-host ~]#ls /etc/libvirt/qemu -l-rw----- ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E8%99%9A%E6%8B%9F%E5%8C%96KVM-%E5%8E%9F%E7%90%86%E9%83%A8%E7%BD%B2/" title="虚拟化KVM-原理部署">虚拟化KVM-原理部署</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:23:29.000Z" title="Created 2024-08-20 11:23:29">2024-08-20</time></span></div><div class="content">虚拟化原理什么是虚拟化虚拟化是一种技术，它利用软件或硬件创建虚拟的版本或环境，使得一个物理资源（如服务器、存储设备、网络等）可以被划分成多个独立的虚拟资源。这些虚拟资源可以独立运行不同的操作系统、应用程序或服务，从而提高资源利用率、灵活性和可靠性。虚拟化技术包括服务器虚拟化、网络虚拟化、存储虚拟化和桌面虚拟化等。虚拟化技术被广泛应用于数据中心、云计算、虚拟化服务器、虚拟桌面和软件定义网络等领域。
-虚拟化分类虚拟化可以分为多种类型，包括以下几种主要分类：
-
-服务器虚拟化：将一台物理服务器划分成多个虚拟服务器，每个虚拟服务器可以独立运行不同的操作系统和应用程序。
-网络虚拟化：通过软件定义网络（SDN）技术，实现网络资源的虚拟化，使得网络资源可以按需分配和管理。
-存储虚拟化：将多个物理存储设备整合成一个虚拟存储池，实现存储资源的统一管理和分配。
-桌面虚拟化：将用户的桌面环境（包括操作系统和应用程序）虚拟化到服务器端，用户可以通过终端设备远程访问虚拟桌面。
-应用程序虚拟化：将应用程序与其依赖的运行时环境打包成一个独立的容器，实现应用程序的独立部署和运行。
-数据虚拟化：将分布在不同数据源中的数据 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E5%8D%95%E6%9C%BA%E7%BC%96%E6%8E%92/" title="容器Docker-单机编排">容器Docker-单机编排</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T01:32:01.000Z" title="Created 2024-08-20 09:32:01">2024-08-20</time></span></div><div class="content">docker-compose原理compose应用场景
-普通运行容器时，需要手动命令定义大量的参数，而运行一组多个容器时会很麻烦
-当使用compose工具，可以通过yam脚本来定义运行参数，更清晰简单的运行单机下的一组容器应用
-
-学习 docker-compose 对于解决用户在使用 Linux 操作系统时遇到的任何问题，尤其是与容器化应用部署、管理和维护相关的问题，具有显著的优势和必要性。以下是几个主要原因：
-
-简化复杂应用的部署： 在 Linux 系统中部署复杂的应用时，经常需要配置多个容器，并确保它们之间的依赖关系正确无误。docker-compose 通过允许你定义一个 YAML 格式的 docker-compose.yml 文件来定义多个容器的配置，简化了这一流程。这个文件包含了所有需要运行的容器信息，包括它们之间的依赖关系、网络配置、环境变量等。使用 docker-compose up 命令，你可以轻松启动所有服务，无需手动逐个启动容器。
-提高可移植性和可重复性： 使用 docker-compose，你可以将应用的部署配置保存在版本控制系统中，这意味着不同的开发者和运维人员 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E9%83%A8%E7%BD%B2%E5%BA%94%E7%94%A8/" title="容器Docker-部署应用">容器Docker-部署应用</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T01:31:48.000Z" title="Created 2024-08-20 09:31:48">2024-08-20</time></span></div><div class="content">容器启动link链接作用docker run 命令是 Docker 中用于创建并运行新容器的核心命令之一。--link 参数在 Docker 的早期版本中非常常见，用于容器间的网络连接，使得一个容器可以通过别名（alias）访问另一个容器的 IP 地址、端口等信息，而无需暴露这些容器到宿主机的网络或配置复杂的网络桥接。
-然而，需要注意的是，随着 Docker 网络功能的不断完善和 Docker Compose 等工具的兴起，--link 参数的使用已经逐渐被更现代、更灵活的网络解决方案所取代。Docker 官方文档也推荐使用自定义网络（如 bridge、overlay 等）来实现容器间的通信，因为这种方法更加灵活且易于管理。
-1.–link 参数的作用当使用 --link 参数时，Docker 会自动执行以下操作：
-
-更新环境变量：Docker 会在目标容器（即 docker run 命令中未使用 --link 的那个容器）中设置一些环境变量，这些环境变量包含了源容器（即 --link 后指定的容器）的网络信息，如 IP 地址、端口号等。环境变量的命名格式为 &lt;别名&gt;_PO ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA/" title="容器Docker-镜像构建">容器Docker-镜像构建</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T01:31:29.000Z" title="Created 2024-08-20 09:31:29">2024-08-20</time></span></div><div class="content">一、dockerfile原理1.镜像构建与提交的区别
-dockerfile和commit区别
-
-1.1 可重复性
-场景：假设您有一个Web应用程序，它依赖于特定的软件版本和配置。如果您使用Dockerfile来构建镜像，那么每次运行docker build时，都会根据Dockerfile中的指令精确地安装这些依赖项和配置，确保每次构建的镜像都是相同的。
-
-对比：如果您直接操作一个运行中的容器并安装所需的软件，然后提交为镜像，那么下一次在不同的环境或时间点上重复这个过程时，可能会因为环境差异（如不同的包管理器版本、网络状态等）导致安装的软件版本或配置有所不同。
-
-
-1.2 版本控制
-场景：在开发过程中，您可能需要频繁地更改镜像的构建步骤或依赖项。使用Dockerfile，您可以轻松地将其提交到Git等版本控制系统，这样团队成员就可以查看每次更改的历史，并理解为什么进行这些更改。
-对比：如果您直接提交容器为镜像，并且没有记录这些更改的文档或日志，那么追踪和理解这些更改将变得非常困难。
-
-1.3 可透明性
-场景：当您需要将镜像部署到生产环境时，运维团队需要了解镜像中包含了哪些软件和配置。通过 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E7%BD%91%E7%BB%9C%E5%AD%98%E5%82%A8/" title="容器Docker-网络存储">容器Docker-网络存储</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T01:31:14.000Z" title="Created 2024-08-20 09:31:14">2024-08-20</time></span></div><div class="content">Docker网络管理
-桥接模式：提供个网桥，可以让容器与宿主机实现通信，网桥会创建个网段，网关在宿主机，容器会分配个网段内的ip与外部通信
-主机模式：容器用宿主机的网络配置，容器没有自己单独的网络空间，ip地址网卡都用宿主机的
-容器模式：容器用其他容器的网络配置，也没有自己的网络空间
-没有模式：容器没有网络空间，谁的网络空间也不用
-
-1.网络概述
-在Linux操作系统中，Docker的网络功能是一个复杂但关键的部分，它主要解决容器与容器、容器与外部网络、外部网络与容器之间的通信问题。以下是Docker网络功能的详细概述：
-一、Docker网络的基本概念Docker的网络功能基于Network Namespace提供隔离的网络环境，使得每个容器都拥有独立的网络栈。这种隔离性有助于保障容器的安全性和稳定性。
-二、Docker的网络模式Docker提供了多种网络模式，以适应不同的应用场景和需求。主要包括以下几种：
-
-Bridge模式（桥接模式）：
-默认模式：Docker容器默认使用Bridge模式。
-工作原理：Docker会创建一个名为docker0的虚拟网桥，类似于物理交换机，连接所有容器 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" title="容器Docker-安装部署">容器Docker-安装部署</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T01:31:00.000Z" title="Created 2024-08-20 09:31:00">2024-08-20</time></span></div><div class="content">docker安装部署1.开启流量转发
-创建docker容器，会进行网络空间隔离，就是给容器分配不同的ip地址，会通过桥接的技术给容器分配不同网段地址，所以容器想要实现网络通信数据传输，就得通过流量转发给宿主机，
-
-12345678910111213141516171819#开启内核参数让宿主机与网桥下的容器可以进行数据包交互cat &gt; /etc/sysctl.d/docker.conf &lt;&lt;EOFnet.bridge.bridge-nf-call-ip6tables = 1net.bridge.bridge-nf-call-iptables = 1net.ipv4.ip_forward=1EOF[root@docker-01 ~]#cat /etc/sysctl.d/docker.conf net.bridge.bridge-nf-call-ip6tables = 1net.bridge.bridge-nf-call-iptables = 1net.ipv4.ip_forward=1#开启内核提供的桥接功能modprobe br_netfiltersysctl -p  ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E5%8E%9F%E7%90%86%E6%A6%82%E8%BF%B0/" title="容器Docker-原理概述">容器Docker-原理概述</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T01:30:46.000Z" title="Created 2024-08-20 09:30:46">2024-08-20</time></span></div><div class="content">服务部署技术的演变服务器部署应用在没有虚拟化技术时，服务器部署服务的流程通常如下：
-
-服务器选型和采购：首先需要根据业务需求选择合适的服务器硬件，并进行采购。
-操作系统安装：在服务器上安装合适的操作系统，通常是类UNIX或Windows Server等。
-依赖软件安装：根据服务的需求，安装必要的依赖软件，例如数据库服务、Web 服务器、应用程序运行环境等。
-服务软件安装：安装并配置需要部署的服务软件，例如应用程序、Web 服务、文件服务等。
-网络配置：配置服务器的网络，包括 IP 地址、子网掩码、网关、DNS 等。
-安全配置：进行安全性配置，比如设置防火墙规则、安装安全补丁、配置访问控制等。
-性能优化：优化服务器的性能，例如进行内存、磁盘等资源的调优、配置缓存等。
-备份与恢复：设置数据备份策略，确保数据的安全性和可恢复性。
-
-一旦服务部署完成，需要进行持续的监控和维护，以确保服务的稳定性和安全性。这种部署方式通常需要花费较多的时间和精力，并且在资源利用率和灵活性上会受到一定的限制。随着虚拟化和容器化技术的发展，部署服务的方式已经有了很大的变革。
-
-缺点，说白了就是太麻烦，太慢，费钱费精 ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">赵东兴</div><div class="author-info__description">个人技术笔记博客</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E9%98%B2%E7%81%AB%E5%A2%99iptables-%E5%91%BD%E4%BB%A4%E5%BA%94%E7%94%A8/" title="防火墙iptables-命令应用">防火墙iptables-命令应用</a><time datetime="2024-08-20T03:25:18.000Z" title="Created 2024-08-20 11:25:18">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E9%98%B2%E7%81%AB%E5%A2%99iptables-%E5%8E%9F%E7%90%86%E9%83%A8%E7%BD%B2/" title="防火墙iptables-原理部署">防火墙iptables-原理部署</a><time datetime="2024-08-20T03:24:37.000Z" title="Created 2024-08-20 11:24:37">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E8%99%9A%E6%8B%9F%E5%8C%96KVM-%E5%8A%9F%E8%83%BD%E5%91%BD%E4%BB%A4/" title="虚拟化KVM-功能命令">虚拟化KVM-功能命令</a><time datetime="2024-08-20T03:23:42.000Z" title="Created 2024-08-20 11:23:42">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E8%99%9A%E6%8B%9F%E5%8C%96KVM-%E5%8E%9F%E7%90%86%E9%83%A8%E7%BD%B2/" title="虚拟化KVM-原理部署">虚拟化KVM-原理部署</a><time datetime="2024-08-20T03:23:29.000Z" title="Created 2024-08-20 11:23:29">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E5%AE%B9%E5%99%A8Docker-%E5%8D%95%E6%9C%BA%E7%BC%96%E6%8E%92/" title="容器Docker-单机编排">容器Docker-单机编排</a><time datetime="2024-08-20T01:32:01.000Z" title="Created 2024-08-20 09:32:01">2024-08-20</time></div></div></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/08/"><span class="card-archive-list-date">August 2024</span><span class="card-archive-list-count">20</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article :</div><div class="item-count">20</div></div><div class="webinfo-item"><div class="item-name">UV :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">PV :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">Last Update :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-08-20T03:41:13.122Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 赵东兴</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+3 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/20/%E8%99%9A%E6%8B%9F%E5%8C%96KVM-%E5%8A%9F%E8%83%BD%E5%91%BD%E4%BB%A4/" title="虚拟化KVM-功能命令">虚拟化KVM-功能命令</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2024-08-20T03:23:42.000Z" title="Created 2024-08-20 11:23:42">2024-08-20</time></span></div><div class="content">kvm生产实践1.虚拟机删除1.1正常删除12345678910111213141516171819202122232425262728293031323334353637383940414243444546#准备环境创建一个虚拟机[root@kvm-host ~]#virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name kvm-web02 --memory 2048,maxmemory=4096 --vcpus 2,maxvcpus=8  --disk /kvm_data/kvm-web02.raw,format=raw,size=10 --cdrom  /kvm_data/CentOS-7-x86_64-DVD-2009.iso --network network=default --graphics vnc,listen=0.0.0.0  --noautoconsole#检查生成的磁盘镜像文件与配置[root@kvm-host ~]#ls /etc/libvirt/qemu -l-rw----- ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><a class="page-number" href="/page/3/#content-inner">3</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">赵东兴</div><div class="author-info__description">个人技术笔记博客</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E6%9C%8D%E5%8A%A1%E4%BC%98%E5%8C%96/" title="数据库Redis-服务优化">数据库Redis-服务优化</a><time datetime="2024-08-20T03:44:08.000Z" title="Created 2024-08-20 11:44:08">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%88%86%E5%B8%83%E9%9B%86%E7%BE%A4/" title="数据库Redis-分布集群">数据库Redis-分布集群</a><time datetime="2024-08-20T03:43:56.000Z" title="Created 2024-08-20 11:43:56">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E5%93%A8%E5%85%B5%E5%8A%9F%E8%83%BD/" title="数据库Redis-哨兵功能">数据库Redis-哨兵功能</a><time datetime="2024-08-20T03:43:39.000Z" title="Created 2024-08-20 11:43:39">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="数据库Redis-主从复制">数据库Redis-主从复制</a><time datetime="2024-08-20T03:43:24.000Z" title="Created 2024-08-20 11:43:24">2024-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/20/%E6%95%B0%E6%8D%AE%E5%BA%93Redis-%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85/" title="数据库Redis-数据持久">数据库Redis-数据持久</a><time datetime="2024-08-20T03:43:10.000Z" title="Created 2024-08-20 11:43:10">2024-08-20</time></div></div></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/08/"><span class="card-archive-list-date">August 2024</span><span class="card-archive-list-count">27</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article :</div><div class="item-count">27</div></div><div class="webinfo-item"><div class="item-name">UV :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">PV :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">Last Update :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-08-20T04:06:34.181Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 赵东兴</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
